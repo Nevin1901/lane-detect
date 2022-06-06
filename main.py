@@ -79,9 +79,18 @@ if __name__ == "__main__":
         plt.draw()
         plt.pause(0.001)
 
+        margin = int(monitor["width"] * (1/12))
+        window_height = int(warped_frame.shape[0] / 10)
 
+        midpoint = int(historigram.shape[0] / 2)
+        left_x = np.argmax(historigram[:midpoint])
+        right_x = np.argmax(historigram[midpoint:]) + midpoint
 
-        cv.imshow("frame", w_line)
+        non_zero = warped_frame.nonzero()
+        non_zero_y = np.array(non_zero[0])
+        non_zero_x = np.array(non_zero[1])
+
+        cv.imshow("frame", warped_frame)
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
