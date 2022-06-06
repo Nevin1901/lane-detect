@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import time
 import cv2 as cv
 from mss import mss
@@ -19,6 +20,8 @@ if __name__ == "__main__":
     "width": 1240,
     "height": 918,
     }
+    plt.ion()
+    plt.show()
 
     while True:
         img = get_img()
@@ -27,12 +30,12 @@ if __name__ == "__main__":
 
         hsv = cv.cvtColor(img, cv.COLOR_RGB2HSV)
 
-        y_lower = np.array([80, 120, 80])
-        y_upper = np.array([200, 255, 255])
+        y_lower = np.array([100, 140, 100])
+        y_upper = np.array([255, 255, 255])
         y_line = cv.inRange(hsv, y_lower, y_upper)
 
-        w_lower = np.array([0, 0, 200])
-        w_upper = np.array([255, 32, 255])
+        w_lower = np.array([18, 0, 200])
+        w_upper = np.array([255, 10, 255])
         w_line = cv.inRange(hsv, w_lower, w_upper)
 
         # combine two masks
@@ -45,13 +48,13 @@ if __name__ == "__main__":
         trapezoid = np.array([
         [
         # top left
-        (620-120, 494),
+        (620-120, 520), # 494
         # bottom left
         (40, 918-120),
         # bottom right
         (1240-40, 918-120),
         # top right
-        (620+120, 494)]
+        (620+120, 520)]
         ])
 
         mask = np.zeros_like(edges)
@@ -70,7 +73,15 @@ if __name__ == "__main__":
         t_matrix = cv.getPerspectiveTransform(np.float32(trapezoid[0]), desired_points)
         warped_frame = cv.warpPerspective(mask, t_matrix, (monitor["width"], monitor["height"]), flags=(cv.INTER_LINEAR))
 
-        cv.imshow("frame", warped_frame)
+        historigram = np.sum(warped_frame[int(warped_frame.shape[0]/2):,:], axis=0)
+        plt.clf()
+        plt.plot(historigram)
+        plt.draw()
+        plt.pause(0.001)
+
+
+
+        cv.imshow("frame", w_line)
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
