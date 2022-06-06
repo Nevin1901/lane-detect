@@ -6,10 +6,10 @@ if __name__ == "__main__":
 
     with mss() as sct:
         monitor = {
-        "top": 0,
+        "top": 30,
         "left": 350,
         "width": 1240,
-        "height": 948,
+        "height": 918,
         }
 
         # 342
@@ -27,9 +27,15 @@ if __name__ == "__main__":
         w_lower = np.array([0, 0, 240])
         w_upper = np.array([255, 5, 255])
         w_line = cv.inRange(hsv, w_lower, w_upper)
-        # weird = cv.cvtColor(dark, cv.COLOR_GRAY2HSL)
 
-        cv.imshow("frame", w_line)
+        # combine two masks
+        combined = y_line | w_line
+
+        blur = cv.blur(combined, (5, 5))
+
+        edges = cv.Canny(combined, 100, 200)
+
+        cv.imshow("frame", edges)
         key = cv.waitKey()
 
         if key == 113:
