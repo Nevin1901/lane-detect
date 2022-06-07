@@ -30,12 +30,12 @@ if __name__ == "__main__":
 
         hsv = cv.cvtColor(img, cv.COLOR_RGB2HSV)
 
-        y_lower = np.array([100, 140, 100])
+        y_lower = np.array([40, 44, 80])
         y_upper = np.array([255, 255, 255])
         y_line = cv.inRange(hsv, y_lower, y_upper)
 
-        w_lower = np.array([18, 0, 200])
-        w_upper = np.array([255, 10, 255])
+        w_lower = np.array([18, 0, 210])
+        w_upper = np.array([255, 5, 255])
         w_line = cv.inRange(hsv, w_lower, w_upper)
 
         # combine two masks
