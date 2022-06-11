@@ -31,7 +31,7 @@ if __name__ == "__main__":
         hsv = cv.cvtColor(img, cv.COLOR_RGB2HSV)
 
         y_lower = np.array([40, 44, 80])
-        y_upper = np.array([255, 255, 255])
+        y_upper = np.array([80, 200, 255])
         y_line = cv.inRange(hsv, y_lower, y_upper)
 
         w_lower = np.array([18, 0, 210])
@@ -73,10 +73,9 @@ if __name__ == "__main__":
         t_matrix = cv.getPerspectiveTransform(np.float32(trapezoid[0]), desired_points)
         warped_frame = cv.warpPerspective(mask, t_matrix, (monitor["width"], monitor["height"]), flags=(cv.INTER_LINEAR))
 
-        grad_y = cv.Sobel(warped_frame, cv.CV_16S, 0, 1, ksize=3, scale=1, delta=0, borderType=cv.BORDER_DEFAULT)
+        grad_y = cv.Scharr(warped_frame, cv.CV_16S, 0, 1, scale=1, delta=0, borderType=cv.BORDER_DEFAULT)
+        # grad_y = cv.Sobel(warped_frame, cv.CV_16S, 0, 1, ksize=3, scale=1, delta=0, borderType=cv.BORDER_DEFAULT)
         abs_grad_y = cv.convertScaleAbs(grad_y)
-
-        print(grad_y)
 
         historigram = np.sum(warped_frame[int(warped_frame.shape[0]/2):,:], axis=0)
         plt.clf()
@@ -90,12 +89,15 @@ if __name__ == "__main__":
         midpoint = int(historigram.shape[0] / 2)
         left_x = np.argmax(historigram[:midpoint])
         right_x = np.argmax(historigram[midpoint:]) + midpoint
+        # print(f"{left_x} - {right_x}")
 
         non_zero = warped_frame.nonzero()
         non_zero_y = np.array(non_zero[0])
         non_zero_x = np.array(non_zero[1])
 
-        cv.imshow("frame", abs_grad_y)
+        print(non_zero_x.shape)
+
+        cv.imshow("frame", y_line)
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
